@@ -23,9 +23,9 @@ SOFTWARE.
 package eiimsgbus
 
 import (
-	msgbus "EIIMessageBus/internal/pkg/msgbus"
-	types "EIIMessageBus/pkg/types"
 	"errors"
+	msgbus "github.com/open-edge-insights/eii-messagebus-go/internal/pkg/msgbus"
+	types "github.com/open-edge-insights/eii-messagebus-go/pkg/types"
 )
 
 // Service object. This object is not thread-safe.

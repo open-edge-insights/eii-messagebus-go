@@ -23,7 +23,7 @@ SOFTWARE.
 package msgbus
 
 import (
-	// types "EIIMessageBus/pkg/types"
+	types "github.com/open-edge-insights/eii-messagebus-go/pkg/types"
 	"reflect"
 	"testing"
 )

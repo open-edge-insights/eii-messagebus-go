@@ -65,9 +65,9 @@ int get_part_len(parts_wrapper_t* wrap, int idx) {
 */
 import "C"
 import (
-	types "EIIMessageBus/pkg/types"
 	"encoding/json"
 	"errors"
+	types "github.com/open-edge-insights/eii-messagebus-go/pkg/types"
 	"reflect"
 	"unsafe"
 )
