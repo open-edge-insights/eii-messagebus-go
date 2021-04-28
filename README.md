@@ -1,3 +1,4 @@
-# eii-messagebus-go
+# EII Message Bus Golang Binding
 
-This project hosts EII messagebus go library
+For more information about the EII Message Bus Golang Binding, please see the
+main repository for the EII Message Bus.
