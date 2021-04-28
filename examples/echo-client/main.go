@@ -23,9 +23,9 @@ SOFTWARE.
 package main
 
 import (
-	eiimsgbus "EIIMessageBus/eiimsgbus"
 	"flag"
 	"fmt"
+	eiimsgbus "github.com/open-edge-insights/eii-messagebus-go/eiimsgbus"
 )
 
 func main() {
