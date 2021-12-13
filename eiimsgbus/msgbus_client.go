@@ -23,8 +23,8 @@ SOFTWARE.
 package eiimsgbus
 
 import (
-	msgbus "EIIMessageBus/internal/pkg/msgbus"
-	types "EIIMessageBus/pkg/types"
+	msgbus "github.com/open-edge-insights/eii-messagebus-go/internal/pkg/msgbus"
+	types "github.com/open-edge-insights/eii-messagebus-go/pkg/types"
 	"errors"
 	"sync"
 )

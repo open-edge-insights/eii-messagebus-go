@@ -222,7 +222,7 @@ static inline recv_wrapper_t recv_timedwait(void* ctx, recv_ctx_t* recv_ctx, int
 */
 import "C"
 import (
-	types "EIIMessageBus/pkg/types"
+	types "github.com/open-edge-insights/eii-messagebus-go/pkg/types"
 	"encoding/json"
 	"errors"
 	"reflect"

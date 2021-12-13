@@ -23,7 +23,7 @@ SOFTWARE.
 package eiimsgbus
 
 import (
-	msgbus "EIIMessageBus/internal/pkg/msgbus"
+	msgbus "github.com/open-edge-insights/eii-messagebus-go/internal/pkg/msgbus"
 	"errors"
 )
 

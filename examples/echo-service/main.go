@@ -23,7 +23,7 @@ SOFTWARE.
 package main
 
 import (
-	eiimsgbus "EIIMessageBus/eiimsgbus"
+	eiimsgbus "github.com/open-edge-insights/eii-messagebus-go/eiimsgbus"
 	"flag"
 	"fmt"
 )
