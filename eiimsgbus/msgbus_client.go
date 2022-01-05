@@ -161,7 +161,14 @@ func (recv *receiveRoutine) run() {
 
 	// Infinite loop while receiving messages until told to quit over the QuitCh
 	for {
-		msg, err := ctx.ReceiveTimedWait(recv.RecvCtx, 100)
+		// Changed timeout value from 100ms to 1000ms. 
+		// A timeout value of 100ms appears to be too low, as it has been observed 
+		// that socket is getting intermittent EINTR error from influxdbconnector 
+		// which appear to have fixed when the value was bumped to 1000ms. 
+		// TODO: This is a temporary fix. We need to investigate why
+		// socket is getting EINT error when timeoute value is 100ms, and should also
+		// possibly retry the read operation, even on such errors.
+		msg, err := ctx.ReceiveTimedWait(recv.RecvCtx, 1000)
 		if msg == nil && err == nil {
 			// Timeout...
 		} else if err != nil {
