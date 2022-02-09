@@ -80,7 +80,7 @@ import (
 // Global for checking if slice is a []byte slice
 var typeOfBytes = reflect.TypeOf([]byte(nil))
 
-// Convert Go message envelope representation to C message envelope representation
+// GoToMsgEnvelope - Convert Go message envelope representation to C message envelope representation
 func GoToMsgEnvelope(env interface{}) (unsafe.Pointer, error) {
 	var msg unsafe.Pointer
 	envValue := reflect.ValueOf(env)
@@ -195,8 +195,8 @@ func goToMsgEnvElemBody(data interface{}) (unsafe.Pointer, error) {
 			return nil, errors.New("Error initializing msg envelope object element")
 		}
 
-		map_data := data.(map[string]interface{})
-		for key, value := range map_data {
+		mapData := data.(map[string]interface{})
+		for key, value := range mapData {
 			subelem, err := goToMsgEnvElemBody(value)
 			if err != nil {
 				C.msgbus_msg_envelope_elem_destroy(body)
@@ -218,8 +218,8 @@ func goToMsgEnvElemBody(data interface{}) (unsafe.Pointer, error) {
 			return nil, errors.New("Error initializing msg envelope object element")
 		}
 
-		slice_data := data.([]interface{})
-		for _, value := range slice_data {
+		sliceData := data.([]interface{})
+		for _, value := range sliceData {
 			subelem, err := goToMsgEnvElemBody(value)
 			if err != nil {
 				C.msgbus_msg_envelope_elem_destroy(body)

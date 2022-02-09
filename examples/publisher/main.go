@@ -40,7 +40,7 @@ func main() {
 	}
 
 	fmt.Printf("-- Loading configuration file %s\n", *configFile)
-	config, err := eiimsgbus.ReadJsonConfig(*configFile)
+	config, err := eiimsgbus.ReadJSONConfig(*configFile)
 	if err != nil {
 		fmt.Printf("-- Failed to parse config: %v\n", err)
 		return

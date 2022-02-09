@@ -40,7 +40,7 @@ func main() {
 	}
 
 	fmt.Printf("-- Loading configuration file %s\n", *configFile)
-	config, err := eiimsgbus.ReadJsonConfig(*configFile)
+	config, err := eiimsgbus.ReadJSONConfig(*configFile)
 	if err != nil {
 		fmt.Printf("-- Failed to parse config: %v\n", err)
 		return
@@ -79,13 +79,13 @@ func main() {
 		"empty": nil,
 	}
 	blob := []byte("Blob One")
-	blob_two := []byte("Blob Two")
-	blob_three := []byte("Blob Three")
+	blobTwo := []byte("Blob Two")
+	blobThree := []byte("Blob Three")
 	slice := make([]interface{}, 4)
 	slice[0] = m
 	slice[1] = blob
-	slice[2] = blob_two
-	slice[3] = blob_three
+	slice[2] = blobTwo
+	slice[3] = blobThree
 
 	for {
 		err = publisher.Publish(slice)

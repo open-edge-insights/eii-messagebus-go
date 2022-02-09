@@ -29,14 +29,14 @@ import (
 	"sync"
 )
 
-// Message bus client object
+// MsgbusClient - Message bus client object
 type MsgbusClient struct {
 	ctx    *msgbus.MsgbusContext
 	mu     sync.Mutex
 	closed bool
 }
 
-// Initialize a new message bus context.
+// NewMsgbusClient - Initialize a new message bus context.
 func NewMsgbusClient(config map[string]interface{}) (*MsgbusClient, error) {
 	msgbusCtx, err := msgbus.NewMsgbusContext(config)
 	if err != nil {
@@ -50,7 +50,7 @@ func NewMsgbusClient(config map[string]interface{}) (*MsgbusClient, error) {
 	return ctx, nil
 }
 
-// Create a new publisher on the message bus context.
+// NewPublisher - Create a new publisher on the message bus context.
 func (ctx *MsgbusClient) NewPublisher(topic string) (*Publisher, error) {
 	ctx.mu.Lock()
 	defer ctx.mu.Unlock() // This may not need to be thread-safe
@@ -68,7 +68,7 @@ func (ctx *MsgbusClient) NewPublisher(topic string) (*Publisher, error) {
 	return publisher, nil
 }
 
-// Create a new subscriber for the specified topic.
+// NewSubscriber - Create a new subscriber for the specified topic.
 func (ctx *MsgbusClient) NewSubscriber(topic string) (*Subscriber, error) {
 	msgCh := make(chan *types.MsgEnvelope)
 	errCh := make(chan error)
@@ -104,7 +104,7 @@ func (ctx *MsgbusClient) NewSubscriber(topic string) (*Subscriber, error) {
 	return sub, nil
 }
 
-// Create a new service to receive requests over and send responses from.
+// NewService - Create a new service to receive requests over and send responses from.
 func (ctx *MsgbusClient) NewService(serviceName string) (*Service, error) {
 	servCtx, err := ctx.ctx.NewService(serviceName)
 	if err != nil {
@@ -138,7 +138,7 @@ func (ctx *MsgbusClient) Close() {
 	ctx.closed = true
 }
 
-// Check if the message bus client has already been destroyed.
+// IsClosed - Check if the message bus client has already been destroyed.
 func (ctx *MsgbusClient) IsClosed() bool {
 	ctx.mu.Lock()
 	defer ctx.mu.Unlock()
