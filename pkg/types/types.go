@@ -22,15 +22,15 @@ SOFTWARE.
 
 package types
 
-// Message envelope wrapper type
+// MsgEnvelope (Message envelope) wrapper type
 type MsgEnvelope struct {
 	Name string
 	Data map[string]interface{}
-	Blob []byte
+	Blob [][]byte
 }
 
-// Initialize a new message envelope.
-func NewMsgEnvelope(data map[string]interface{}, blob []byte) *MsgEnvelope {
+// NewMsgEnvelope - Initialize a new message envelope.
+func NewMsgEnvelope(data map[string]interface{}, blob [][]byte) *MsgEnvelope {
 	env := new(MsgEnvelope)
 	// topic or service name
 	env.Name = ""

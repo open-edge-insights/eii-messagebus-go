@@ -45,7 +45,7 @@ func newService(msgbusClient *MsgbusClient, servCtx *msgbus.ReceiveContext) *Ser
 	return service
 }
 
-// Receive a request issued to the service.
+// ReceiveRequest - Receive a request issued to the service.
 //
 // The timeout parameter determines how the receive call will function. If the
 // timeout is less than 0, then it will block for ever. If it is set 0, then
@@ -76,7 +76,7 @@ func (service *Service) ReceiveRequest(timeout int) (*types.MsgEnvelope, error) 
 	return msg, err
 }
 
-// Send a response to a request received by the service.
+// Response - Send a response to a request received by the service.
 func (service *Service) Response(response interface{}) error {
 	if service.client.IsClosed() {
 		return errors.New("Message bus context has been destroyed")

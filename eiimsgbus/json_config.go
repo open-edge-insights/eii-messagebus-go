@@ -30,10 +30,10 @@ import (
 	"os"
 )
 
-// Helper function for parsing a JSON configuration for the message bus from the given byte blob.
+// ParseJSONConfig - Helper function for parsing a JSON configuration for the message bus from the given byte blob.
 //
 // Note: This method automatically takes care of using a JSON decode having set the UseNumber() flag.
-func ParseJsonConfig(jsonBytes []byte) (map[string]interface{}, error) {
+func ParseJSONConfig(jsonBytes []byte) (map[string]interface{}, error) {
 	var out map[string]interface{}
 
 	// Initialize decoder
@@ -49,11 +49,11 @@ func ParseJsonConfig(jsonBytes []byte) (map[string]interface{}, error) {
 	return out, nil
 }
 
-// Helper function for reading a JSON configuration for the message bus from a JSON
+// ReadJSONConfig - Helper function for reading a JSON configuration for the message bus from a JSON
 // configuration file.
 //
 // Note: This method automatically takes care of using a JSON decode having set the UseNumber() flag.
-func ReadJsonConfig(fileName string) (map[string]interface{}, error) {
+func ReadJSONConfig(fileName string) (map[string]interface{}, error) {
 	// Open JSON file
 	if fileName == "" {
 		return nil, errors.New("fileName cannot be empty")
@@ -68,5 +68,5 @@ func ReadJsonConfig(fileName string) (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return ParseJsonConfig(jsonBytes)
+	return ParseJSONConfig(jsonBytes)
 }

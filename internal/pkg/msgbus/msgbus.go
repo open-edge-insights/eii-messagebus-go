@@ -102,7 +102,7 @@ static inline void* init_msgbus(int ref_id) {
 
 	go_config->ref_id = ref_id;
 
-	config_t* config = config_new((void*) go_config, free_config, get_config_value);
+	config_t* config = config_new((void*) go_config, free_config, get_config_value, NULL);
 	if(config == NULL) {
 		free(go_config);
 		return NULL;
@@ -231,8 +231,8 @@ import (
 )
 
 //export go_get_config_value
-func go_get_config_value(refId C.int, cKey *C.char) unsafe.Pointer {
-	config := lookup((int)(refId))
+func go_get_config_value(refID C.int, cKey *C.char) unsafe.Pointer {
+	config := lookup((int)(refID))
 	key := C.GoString(cKey)
 	value, err := config.GetConfigValue(key)
 	if err != nil {
@@ -242,8 +242,8 @@ func go_get_config_value(refId C.int, cKey *C.char) unsafe.Pointer {
 }
 
 //export go_get_array_idx
-func go_get_array_idx(refId C.int, idx C.int) unsafe.Pointer {
-	config := lookup((int)(refId))
+func go_get_array_idx(refID C.int, idx C.int) unsafe.Pointer {
+	config := lookup((int)(refID))
 	value, err := config.GetArrayIndex((int)(idx))
 	if err != nil {
 		return nil
@@ -252,21 +252,21 @@ func go_get_array_idx(refId C.int, idx C.int) unsafe.Pointer {
 }
 
 //export go_free_config
-func go_free_config(refId C.int) {
-	unregister((int)(refId))
+func go_free_config(refID C.int) {
+	unregister((int)(refID))
 }
 
-// Message bus context object
+// MsgbusContext (Message bus context) object
 type MsgbusContext struct {
 	msgbusCtx unsafe.Pointer
 }
 
-// Publisher context wrapper
+// PublisherContext wrapper
 type PublisherContext struct {
 	pubCtx unsafe.Pointer
 }
 
-// Receive context wrapper
+// ReceiveContext wrapper
 type ReceiveContext struct {
 	recvCtx unsafe.Pointer
 }
@@ -348,18 +348,18 @@ func goToConfigValue(value interface{}) (unsafe.Pointer, error) {
 			configValue = unsafe.Pointer(C.config_value_new_boolean(C.bool(value.(bool))))
 		case reflect.Map:
 			config := newConfigContext(value.(map[string]interface{}), nil)
-			refId := register(config)
-			configValue = unsafe.Pointer(C.new_config_value_object(C.int(refId)))
+			refID := register(config)
+			configValue = unsafe.Pointer(C.new_config_value_object(C.int(refID)))
 			if configValue == nil {
-				unregister(refId)
+				unregister(refID)
 			}
 		case reflect.Slice:
 			arr := value.([]interface{})
 			config := newConfigContext(nil, arr)
-			refId := register(config)
-			configValue = unsafe.Pointer(C.new_config_value_array(C.int(refId), C.int(len(arr))))
+			refID := register(config)
+			configValue = unsafe.Pointer(C.new_config_value_array(C.int(refID), C.int(len(arr))))
 			if configValue == nil {
-				unregister(refId)
+				unregister(refID)
 			}
 		default:
 			return nil, errors.New("Unknown type in data map")
@@ -373,12 +373,12 @@ func goToConfigValue(value interface{}) (unsafe.Pointer, error) {
 	return unsafe.Pointer(configValue), nil
 }
 
-// Initialize a new message bus context
+// NewMsgbusContext - Initialize a new message bus context
 func NewMsgbusContext(config map[string]interface{}) (*MsgbusContext, error) {
 	conf := newConfigContext(config, nil)
-	refId := register(conf)
+	refID := register(conf)
 
-	ctx := C.init_msgbus(C.int(refId))
+	ctx := C.init_msgbus(C.int(refID))
 	if ctx == nil {
 		return nil, errors.New("Failed to initialize message bus context")
 	}
@@ -398,7 +398,7 @@ func (ctx *MsgbusContext) Destroy() {
 	}
 }
 
-// Create a new publisher context on the message bus context for the given topic.
+// NewPublisher - Create a new publisher context on the message bus context for the given topic.
 func (ctx *MsgbusContext) NewPublisher(topic string) (*PublisherContext, error) {
 	wrap := C.new_publisher(ctx.msgbusCtx, C.CString(topic))
 	defer C.destroy_void_wrapper(wrap)
@@ -431,7 +431,7 @@ func (ctx *MsgbusContext) Publish(pubCtx *PublisherContext, msg interface{}) err
 	return nil
 }
 
-// Destroy the given publisher context.
+// DestroyPublisher - Destroy the given publisher context.
 func (ctx *MsgbusContext) DestroyPublisher(pubCtx *PublisherContext) {
 	if pubCtx.pubCtx != nil {
 		C.msgbus_publisher_destroy(ctx.msgbusCtx, (*C.publisher_ctx_t)(pubCtx.pubCtx))
@@ -439,7 +439,7 @@ func (ctx *MsgbusContext) DestroyPublisher(pubCtx *PublisherContext) {
 	}
 }
 
-// Subscribe to the given topic.
+// NewSubscriber - Subscribe to the given topic.
 func (ctx *MsgbusContext) NewSubscriber(topic string) (*ReceiveContext, error) {
 	wrap := C.new_subscriber(ctx.msgbusCtx, C.CString(topic))
 	defer C.destroy_void_wrapper(wrap)
@@ -456,7 +456,7 @@ func (ctx *MsgbusContext) NewSubscriber(topic string) (*ReceiveContext, error) {
 	return recvCtx, nil
 }
 
-// Destroy the given ReceiveContext.
+// DestroyRecvCtx - Destroy the given ReceiveContext.
 func (ctx *MsgbusContext) DestroyRecvCtx(recvCtx *ReceiveContext) {
 	if recvCtx.recvCtx != nil {
 		C.msgbus_recv_ctx_destroy(ctx.msgbusCtx, (*C.recv_ctx_t)(recvCtx.recvCtx))
@@ -464,7 +464,7 @@ func (ctx *MsgbusContext) DestroyRecvCtx(recvCtx *ReceiveContext) {
 	}
 }
 
-// Receive a message from the message bus on the given receive context. This receive
+// ReceiveWait - Receive a message from the message bus on the given receive context. This receive
 // method will block indefinitley.
 func (ctx *MsgbusContext) ReceiveWait(recvCtx *ReceiveContext) (*types.MsgEnvelope, error) {
 	recvRet := C.recv_wait(ctx.msgbusCtx, (*C.recv_ctx_t)(recvCtx.recvCtx))
@@ -491,7 +491,7 @@ func (ctx *MsgbusContext) ReceiveWait(recvCtx *ReceiveContext) (*types.MsgEnvelo
 	return msg, nil
 }
 
-// Receive a message with no wait. Note that if there is no message available then
+// ReceiveNoWait - Receive a message with no wait. Note that if there is no message available then
 // both return values will be nil.
 func (ctx *MsgbusContext) ReceiveNoWait(recvCtx *ReceiveContext) (*types.MsgEnvelope, error) {
 	recvRet := C.recv_nowait(ctx.msgbusCtx, (*C.recv_ctx_t)(recvCtx.recvCtx))
@@ -520,7 +520,7 @@ func (ctx *MsgbusContext) ReceiveNoWait(recvCtx *ReceiveContext) (*types.MsgEnve
 	return msg, nil
 }
 
-// Receive a message with the given timeout (in milliseconds). Note that if the timeout is reached, then
+// ReceiveTimedWait - Receive a message with the given timeout (in milliseconds). Note that if the timeout is reached, then
 // both return values will be nil.
 func (ctx *MsgbusContext) ReceiveTimedWait(recvCtx *ReceiveContext, timeout int) (*types.MsgEnvelope, error) {
 	recvRet := C.recv_timedwait(ctx.msgbusCtx, (*C.recv_ctx_t)(recvCtx.recvCtx), C.int(timeout))
@@ -549,7 +549,7 @@ func (ctx *MsgbusContext) ReceiveTimedWait(recvCtx *ReceiveContext, timeout int)
 	return msg, nil
 }
 
-// Create a new service to receive requests and send responses over.
+// NewService - Create a new service to receive requests and send responses over.
 func (ctx *MsgbusContext) NewService(serviceName string) (*ReceiveContext, error) {
 	wrap := C.new_service(ctx.msgbusCtx, C.CString(serviceName))
 	defer C.destroy_void_wrapper(wrap)
@@ -563,7 +563,7 @@ func (ctx *MsgbusContext) NewService(serviceName string) (*ReceiveContext, error
 	return recvCtx, nil
 }
 
-// Get the context of a service to issue requests to and receive responses from.
+// GetService - Get the context of a service to issue requests to and receive responses from.
 func (ctx *MsgbusContext) GetService(serviceName string) (*ReceiveContext, error) {
 	wrap := C.get_service(ctx.msgbusCtx, C.CString(serviceName))
 	defer C.destroy_void_wrapper(wrap)
@@ -580,7 +580,7 @@ func (ctx *MsgbusContext) GetService(serviceName string) (*ReceiveContext, error
 	return recvCtx, nil
 }
 
-// Send a request to a service.
+// Request - Send a request to a service.
 func (ctx *MsgbusContext) Request(serviceCtx *ReceiveContext, request interface{}) error {
 	if serviceCtx.recvCtx == nil {
 		return errors.New("Service context already destroyed")
@@ -601,7 +601,7 @@ func (ctx *MsgbusContext) Request(serviceCtx *ReceiveContext, request interface{
 	return nil
 }
 
-// Send response to a request
+// Response - Send response to a request
 func (ctx *MsgbusContext) Response(serviceCtx *ReceiveContext, response interface{}) error {
 	if serviceCtx.recvCtx == nil {
 		return errors.New("Service context already destroyed")

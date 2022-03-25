@@ -39,7 +39,7 @@ func main() {
 	}
 
 	fmt.Printf("-- Loading configuration file %s\n", *configFile)
-	config, err := eiimsgbus.ReadJsonConfig(*configFile)
+	config, err := eiimsgbus.ReadJSONConfig(*configFile)
 	if err != nil {
 		fmt.Printf("-- Failed to parse config: %v\n", err)
 		return
@@ -65,7 +65,15 @@ func main() {
 	for {
 		select {
 		case msg := <-subscriber.MessageChannel:
-			fmt.Printf("-- Received Message: %v on topic: %s\n", msg.Data, msg.Name)
+			if msg.Blob != nil {
+				fmt.Printf("-- Received meta-data: %v \n", msg.Data)
+				for i := range msg.Blob {
+					fmt.Printf("-- Received blob: %s", msg.Blob[i])
+				}
+				fmt.Printf(" on topic: %s \n", msg.Name)
+			} else {
+				fmt.Printf("-- Received Message: %v on topic: %s\n", msg.Data, msg.Name)
+			}
 		case err := <-subscriber.ErrorChannel:
 			fmt.Printf("-- Error receiving message: %v\n", err)
 		}
