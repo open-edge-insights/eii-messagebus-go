@@ -70,9 +70,9 @@ int get_number_of_parts(parts_wrapper_t* wrap) {
 */
 import "C"
 import (
-	types "github.com/open-edge-insights/eii-messagebus-go/pkg/types"
 	"encoding/json"
 	"errors"
+	types "github.com/open-edge-insights/eii-messagebus-go/pkg/types"
 	"reflect"
 	"unsafe"
 )

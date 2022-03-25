@@ -23,8 +23,8 @@ SOFTWARE.
 package eiimsgbus
 
 import (
-	msgbus "github.com/open-edge-insights/eii-messagebus-go/internal/pkg/msgbus"
 	"errors"
+	msgbus "github.com/open-edge-insights/eii-messagebus-go/internal/pkg/msgbus"
 )
 
 type Publisher struct {

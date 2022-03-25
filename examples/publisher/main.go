@@ -23,9 +23,9 @@ SOFTWARE.
 package main
 
 import (
-	eiimsgbus "github.com/open-edge-insights/eii-messagebus-go/eiimsgbus"
 	"flag"
 	"fmt"
+	eiimsgbus "github.com/open-edge-insights/eii-messagebus-go/eiimsgbus"
 	"time"
 )
 
